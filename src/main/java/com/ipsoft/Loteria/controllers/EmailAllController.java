@@ -9,11 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class EmailController {
+public class EmailAllController {
 
-    @GetMapping("/newEmail")
-    public String getNewSort(@RequestParam(name="email", required=false, defaultValue="teste@gmail.com") String email) {
+    @GetMapping("/getEmail")
+    public String getAllSortsFromEmail(@RequestParam(name="email", required=true) String email) {
 
+        String sorteios = "";
         MemoryRepository mRepository = MemoryRepository.getInstance();
 
         if(mRepository.getClientes().contains(email)) {
@@ -21,15 +22,19 @@ public class EmailController {
             Integer index = mRepository.getClientes().indexOf(email);
             Cliente cliente = mRepository.getClientes().get(index);
 
-            return cliente.toString();
+            for(Integer numero : cliente.getSorteios()) {
+
+                sorteios += numero + " ";
+
+            }
+
+            return sorteios;
 
         }else {
-            Cliente cliente = new Cliente(email);
-            List<Integer> sorteio = new GetNumbers().randomNumber().getNumeros();
-            cliente.setSorteios(sorteio);
 
-            return cliente.getSorteios().toString();
+            return "Não foram localizados sorteios para esse e-mail";
         }
+
 
     }
 
